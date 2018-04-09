@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math/rand"
 	"os"
 	"time"
 
@@ -11,7 +10,7 @@ import (
 )
 
 func init() {
-	rand.Seed(time.Now().UnixNano())
+	genpack.Seed(time.Now().UnixNano())
 }
 
 var (
