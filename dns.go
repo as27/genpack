@@ -6,16 +6,17 @@ import (
 )
 
 type DNS struct {
-	content []byte
-	Fitness float64
+	Content []byte
+	fitness float64
 }
 
 func NewDNS(b []byte) *DNS {
 	return &DNS{
-		content: b,
+		Content: b,
 	}
 }
 
+func NewRandomDNS(length int, allowedBytes []byte) *DNS {
 	var b []byte
 	for i := 0; i < length; i++ {
 		b = append(b, randByte(allowedBytes))
@@ -24,9 +25,9 @@ func NewDNS(b []byte) *DNS {
 }
 
 func (d *DNS) mutate(mutationRate float64, allowedBytes []byte) {
-	for i := range d.content {
+	for i := range d.Content {
 		if rand.Float64() <= mutationRate {
-			d.content[i] = randByte(allowedBytes)
+			d.Content[i] = randByte(allowedBytes)
 		}
 	}
 }
@@ -36,15 +37,15 @@ func randByte(allowedBytes []byte) byte {
 }
 
 func (d *DNS) Reproduce(father *DNS) (*DNS, *DNS) {
-	childDNS1 := make([]byte, len(d.content))
-	childDNS2 := make([]byte, len(d.content))
+	childDNS1 := make([]byte, len(d.Content))
+	childDNS2 := make([]byte, len(d.Content))
 	for i := range childDNS1 {
 		if i%2 == 0 {
-			childDNS1[i] = father.content[i]
-			childDNS2[i] = d.content[i]
+			childDNS1[i] = father.Content[i]
+			childDNS2[i] = d.Content[i]
 		} else {
-			childDNS1[i] = d.content[i]
-			childDNS2[i] = father.content[i]
+			childDNS1[i] = d.Content[i]
+			childDNS2[i] = father.Content[i]
 		}
 	}
 
@@ -52,5 +53,5 @@ func (d *DNS) Reproduce(father *DNS) (*DNS, *DNS) {
 }
 
 func (d *DNS) String() string {
-	return fmt.Sprintf("%s", string(d.content))
+	return fmt.Sprintf("%s", string(d.Content))
 }
