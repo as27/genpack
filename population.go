@@ -53,13 +53,15 @@ func (p *Population) NextGeneration(mutationRate float64) *Population {
 	ng.allowedBytes = p.allowedBytes
 	ng.fitnessFunc = p.fitnessFunc
 	dnss := make([]*DNS, p.Size())
-	for i := 0; i < p.Size(); i++ {
+	for i := 0; i < p.Size(); i = i + 2 {
 		dnsMum := p.pickDNS()
 		dnsDad := p.pickDNS()
-		child, _ := dnsMum.Reproduce(dnsDad)
-		child.mutate(mutationRate, p.allowedBytes)
+		child1, child2 := dnsMum.Reproduce(dnsDad)
+		child1.mutate(mutationRate, p.allowedBytes)
+		child2.mutate(mutationRate, p.allowedBytes)
 
-		dnss[i] = child
+		dnss[i] = child1
+		dnss[i+1] = child2
 	}
 	ng.DNSs = dnss
 	return &ng
