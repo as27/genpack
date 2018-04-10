@@ -5,23 +5,29 @@ import (
 	"math/rand"
 )
 
-type DNS struct {
-	Content []byte
-	fitness float64
+type Fitnesser interface {
+	Fitness() float64
 }
 
-func NewDNS(b []byte) *DNS {
+type DNS struct {
+	fitnesser Fitnesser
+	Content   []byte
+	fitness   float64
+}
+
+func NewDNS(b []byte, f Fitnesser) *DNS {
 	return &DNS{
-		Content: b,
+		fitnesser: f,
+		Content:   b,
 	}
 }
 
-func NewRandomDNS(length int, allowedBytes []byte) *DNS {
+func NewRandomDNS(length int, allowedBytes []byte, f Fitnesser) *DNS {
 	var b []byte
 	for i := 0; i < length; i++ {
 		b = append(b, randByte(allowedBytes))
 	}
-	return NewDNS(b)
+	return NewDNS(b, f)
 }
 
 func (d *DNS) mutate(mutationRate float64, allowedBytes []byte) {
@@ -49,7 +55,7 @@ func (d *DNS) Reproduce(father *DNS) (*DNS, *DNS) {
 		}
 	}
 
-	return NewDNS(childDNS1), NewDNS(childDNS2)
+	return NewDNS(childDNS1, d.fitnesser), NewDNS(childDNS2, d.fitnesser)
 }
 
 func (d *DNS) String() string {

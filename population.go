@@ -10,7 +10,7 @@ import (
 type Population struct {
 	DNSs         []*DNS
 	fitnessSum   float64
-	fitnessFunc  func(*DNS) float64
+	newFunc      func() Fitnesser
 	allowedBytes []byte
 }
 
@@ -23,16 +23,17 @@ type Population struct {
 func CreateNewPopulation(
 	popSize int,
 	dnsLength int,
-	fitnessFunc func(*DNS) float64,
+	newFunc func() Fitnesser,
 	allowedBytes []byte,
 ) *Population {
 	dnss := make([]*DNS, popSize)
 	for i := 0; i < popSize; i++ {
-		dnss[i] = NewRandomDNS(dnsLength, allowedBytes)
+		nf := newFunc()
+		dnss[i] = NewRandomDNS(dnsLength, allowedBytes, nf)
 	}
 	return &Population{
 		DNSs:         dnss,
-		fitnessFunc:  fitnessFunc,
+		newFunc:      newFunc,
 		allowedBytes: allowedBytes,
 	}
 }
@@ -41,7 +42,7 @@ func CreateNewPopulation(
 func (p *Population) CalcFitness() {
 	for _, d := range p.DNSs {
 		go func(d *DNS) {
-			d.fitness = p.fitnessFunc(d)
+			d.fitness = d.fitnesser.Fitness()
 		}(d)
 
 	}
@@ -51,7 +52,7 @@ func (p *Population) CalcFitness() {
 func (p *Population) NextGeneration(mutationRate float64) *Population {
 	ng := Population{}
 	ng.allowedBytes = p.allowedBytes
-	ng.fitnessFunc = p.fitnessFunc
+	ng.newFunc = p.newFunc
 	dnss := make([]*DNS, p.Size())
 	for i := 0; i < p.Size(); i = i + 2 {
 		dnsMum := p.pickDNS()
