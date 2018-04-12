@@ -5,24 +5,27 @@ import (
 	"math/rand"
 )
 
-type Fitnesser interface {
+type DNSFitnesser interface {
 	Fitness() float64
+	LoadDNS(*DNS)
 }
 
 type DNS struct {
-	fitnesser Fitnesser
+	fitnesser DNSFitnesser
 	Content   []byte
 	fitness   float64
 }
 
-func NewDNS(b []byte, f Fitnesser) *DNS {
-	return &DNS{
+func NewDNS(b []byte, f DNSFitnesser) *DNS {
+	d := &DNS{
 		fitnesser: f,
 		Content:   b,
 	}
+	d.fitnesser.LoadDNS(d)
+	return d
 }
 
-func NewRandomDNS(length int, allowedBytes []byte, f Fitnesser) *DNS {
+func NewRandomDNS(length int, allowedBytes []byte, f DNSFitnesser) *DNS {
 	var b []byte
 	for i := 0; i < length; i++ {
 		b = append(b, randByte(allowedBytes))
@@ -54,7 +57,6 @@ func (d *DNS) Reproduce(father *DNS) (*DNS, *DNS) {
 			childDNS2[i] = father.Content[i]
 		}
 	}
-
 	return NewDNS(childDNS1, d.fitnesser), NewDNS(childDNS2, d.fitnesser)
 }
 

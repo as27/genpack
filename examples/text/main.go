@@ -16,30 +16,45 @@ func init() {
 var (
 	flagMutationRate   = flag.Float64("mr", float64(0.01), "mutation rate")
 	flagPopulation     = flag.Int("p", 800, "population")
-	flagTargetText     = flag.String("t", "this is the secret text", "target text")
+	flagTargetText     = ""
 	flagMaxGenerations = flag.Int("max", 5000, "max generations")
 )
 
-func fitness(d *genpack.DNS) float64 {
+type Text struct {
+	txt string
+}
+
+func NewText() genpack.DNSFitnesser {
+	return &Text{}
+}
+
+func (t *Text) LoadDNS(dns *genpack.DNS) {
+	t.txt = string(dns.Content)
+}
+
+func (t *Text) Fitness() float64 {
 	match := 0
-	for i, b := range []byte(*flagTargetText) {
-		if b == d.Content[i] {
+	for i, b := range flagTargetText {
+		if b == rune(t.txt[i]) {
 			match++
 		}
 	}
+	fmt.Println(t.txt, flagTargetText, match)
 	return float64(match * match)
 }
+
 func main() {
+	flag.StringVar(&flagTargetText, "t", "this is the secret text", "target text")
 	flag.Parse()
 	start := time.Now()
-	targetText := *flagTargetText
+	targetText := flagTargetText
 	mutationRate := *flagMutationRate
 	population := *flagPopulation
 	fmt.Println(targetText, mutationRate, population)
 	pop := genpack.CreateNewPopulation(
 		population,
 		len(targetText),
-		fitness,
+		NewText,
 		[]byte("abcdefghijklmnopqrstuvwxyz "),
 	)
 

@@ -10,7 +10,7 @@ import (
 type Population struct {
 	DNSs         []*DNS
 	fitnessSum   float64
-	newFunc      func() Fitnesser
+	newFunc      func() DNSFitnesser
 	allowedBytes []byte
 }
 
@@ -23,13 +23,14 @@ type Population struct {
 func CreateNewPopulation(
 	popSize int,
 	dnsLength int,
-	newFunc func() Fitnesser,
+	newFunc func() DNSFitnesser,
 	allowedBytes []byte,
 ) *Population {
 	dnss := make([]*DNS, popSize)
 	for i := 0; i < popSize; i++ {
 		nf := newFunc()
 		dnss[i] = NewRandomDNS(dnsLength, allowedBytes, nf)
+		dnss[i].fitnesser.LoadDNS(dnss[i])
 	}
 	return &Population{
 		DNSs:         dnss,
