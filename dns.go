@@ -39,6 +39,7 @@ func (d *DNS) mutate(mutationRate float64, allowedBytes []byte) {
 			d.Content[i] = randByte(allowedBytes)
 		}
 	}
+	d.fitnesser.LoadDNS(d)
 }
 
 func randByte(allowedBytes []byte) byte {

@@ -39,8 +39,8 @@ func (t *Text) Fitness() float64 {
 			match++
 		}
 	}
-	fmt.Println(t.txt, flagTargetText, match)
-	return float64(match * match)
+	//fmt.Println(t.txt, flagTargetText, match)
+	return float64(match)
 }
 
 func main() {
@@ -55,7 +55,7 @@ func main() {
 		population,
 		len(targetText),
 		NewText,
-		[]byte("abcdefghijklmnopqrstuvwxyz "),
+		[]byte("abcde"),
 	)
 
 	pop.CalcFitness()
