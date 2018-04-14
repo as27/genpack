@@ -73,6 +73,7 @@ func main() {
 		pop = nextGen
 		pop.CalcFitness()
 		pop.Sort()
+		pop.PrintN(30)
 	}
 }
 func wait() {
