@@ -53,5 +53,5 @@ func (d *DNS) Reproduce(father *DNS) (*DNS, *DNS) {
 }
 
 func (d *DNS) String() string {
-	return fmt.Sprintf("%s", string(d.Content))
+	return fmt.Sprintf("%v", d.Content)
 }
