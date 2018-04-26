@@ -26,11 +26,13 @@ type Mover struct {
 	acceleration *Vector
 	dna          []byte
 	pointer      int
+	size         float64
 }
 
 func newMover(x, y float64, dna []byte) *Mover {
 	m := Mover{dna: dna}
 	m.pointer = 0
+	m.size = 10
 	m.location = &Vector{x, y}
 	m.velocity = &Vector{0, 0}
 	m.acceleration = &Vector{0, 0}
@@ -65,5 +67,5 @@ func (m *Mover) update() {
 }
 
 func (m *Mover) draw() {
-	gop5js.Ellipse(m.location.x, m.location.y, 15, 15)
+	gop5js.Ellipse(m.location.x, m.location.y, m.size, m.size)
 }
